@@ -1,0 +1,29 @@
+experiment:
+  name: cnn_baseline
+  purpose: >
+    Thiết lập một CNN baseline đơn giản cho bài toán phân loại FashionMNIST, để so
+    sánh với MLP baseline và dùng làm tham chiếu cho CNN experiment.
+  hypothesis: >
+    Một CNN nhỏ sẽ vượt trội hơn MLP baseline bằng cách khai thác cấu trúc không
+    gian cục bộ (cạnh, kết cấu) thông qua convolution và pooling.
+  changed_from_baseline: "không áp dụng - đây là lần chạy tham chiếu/baseline của CNN"
+  kept_constant: "không áp dụng - đây là lần chạy tham chiếu/baseline của CNN"
+  expected_observation: >
+    Validation accuracy cao hơn MLP baseline với cùng ngân sách huấn luyện (số
+    epoch, batch size, learning rate, optimizer, cách chia dữ liệu).
+
+model:
+  name: cnn
+  dropout: 0.3
+
+training:
+  epochs: 15
+  batch_size: 64
+  learning_rate: 0.001
+  optimizer: adam
+
+data:
+  validation_ratio: 0.1
+  augmentation: false
+
+seed: 42

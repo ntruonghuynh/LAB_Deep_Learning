@@ -1,0 +1,28 @@
+experiment:
+  name: cnn_baseline
+  purpose: 'Establish a simple CNN baseline for FashionMNIST classification, to be
+    compared against the MLP baseline and used as the reference for the CNN experiment.
+
+    '
+  hypothesis: 'A small CNN should outperform the MLP baseline by exploiting local
+    spatial structure (edges, textures) via convolution and pooling.
+
+    '
+  changed_from_baseline: n/a - this is the CNN reference/baseline run
+  kept_constant: n/a - this is the CNN reference/baseline run
+  expected_observation: 'Higher validation accuracy than the MLP baseline under the
+    same training budget (epochs, batch size, learning rate, optimizer, data split).
+
+    '
+model:
+  name: cnn
+  dropout: 0.3
+training:
+  epochs: 15
+  batch_size: 64
+  learning_rate: 0.001
+  optimizer: adam
+data:
+  validation_ratio: 0.1
+  augmentation: false
+seed: 42

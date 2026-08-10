@@ -1,0 +1,31 @@
+experiment:
+  name: cnn_experiment
+  purpose: 'Test whether stronger dropout regularization improves the CNN''s generalization
+    on FashionMNIST relative to cnn_baseline.
+
+    '
+  hypothesis: 'Increasing dropout from 0.3 to 0.5 should reduce the train/validation
+    accuracy gap (less overfitting), possibly at the cost of slightly slower convergence.
+
+    '
+  changed_from_baseline: 'dropout: 0.3 -> 0.5 (single factor change)'
+  kept_constant: 'Architecture (FashionCNN), epochs, batch size, learning rate, optimizer,
+    seed, and train/validation split are identical to cnn_baseline.
+
+    '
+  expected_observation: 'Smaller gap between train_accuracy and val_accuracy compared
+    to cnn_baseline, with validation accuracy similar or slightly different.
+
+    '
+model:
+  name: cnn
+  dropout: 0.5
+training:
+  epochs: 15
+  batch_size: 64
+  learning_rate: 0.001
+  optimizer: adam
+data:
+  validation_ratio: 0.1
+  augmentation: false
+seed: 42

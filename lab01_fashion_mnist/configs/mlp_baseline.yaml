@@ -1,0 +1,30 @@
+experiment:
+  name: mlp_baseline
+  purpose: >
+    Thiết lập một mô hình cơ sở fully-connected đơn giản cho bài toán phân loại
+    FashionMNIST, để so sánh với CNN baseline.
+  hypothesis: >
+    Một MLP với 2 lớp ẩn sẽ đạt độ chính xác chấp nhận được nhưng kém hơn CNN, vì nó
+    bỏ qua cấu trúc không gian 2D trong ảnh.
+  changed_from_baseline: "không áp dụng - đây là lần chạy baseline đầu tiên"
+  kept_constant: "không áp dụng - đây là lần chạy baseline đầu tiên"
+  expected_observation: >
+    Validation accuracy thấp hơn rõ rệt so với CNN baseline, với khoảng cách
+    train/validation ở mức vừa phải tùy vào dropout.
+
+model:
+  name: mlp
+  hidden_sizes: [256, 128]
+  dropout: 0.2
+
+training:
+  epochs: 15
+  batch_size: 64
+  learning_rate: 0.001
+  optimizer: adam
+
+data:
+  validation_ratio: 0.1
+  augmentation: false
+
+seed: 42

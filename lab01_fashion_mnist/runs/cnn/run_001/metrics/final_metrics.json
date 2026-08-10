@@ -1,0 +1,10 @@
+{
+  "run_id": "run_001",
+  "model": "cnn",
+  "best_epoch": 7,
+  "best_val_loss": 0.22695207234223683,
+  "best_val_accuracy": 0.9195,
+  "final_train_accuracy": 0.9661296296296297,
+  "final_val_accuracy": 0.9256666666666666,
+  "test_accuracy": 0.9161
+}

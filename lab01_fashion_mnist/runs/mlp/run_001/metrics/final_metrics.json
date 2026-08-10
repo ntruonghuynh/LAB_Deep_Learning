@@ -1,0 +1,10 @@
+{
+  "run_id": "run_001",
+  "model": "mlp",
+  "best_epoch": 11,
+  "best_val_loss": 0.30182640091578167,
+  "best_val_accuracy": 0.8901666666666667,
+  "final_train_accuracy": 0.9127777777777778,
+  "final_val_accuracy": 0.8903333333333333,
+  "test_accuracy": 0.8847
+}

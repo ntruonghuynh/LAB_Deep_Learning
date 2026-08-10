@@ -1,0 +1,31 @@
+experiment:
+  name: cnn_experiment
+  purpose: >
+    Kiểm tra xem việc tăng cường độ dropout có cải thiện khả năng tổng quát hóa
+    (generalization) của CNN trên FashionMNIST so với cnn_baseline hay không.
+  hypothesis: >
+    Tăng dropout từ 0.3 lên 0.5 sẽ giảm khoảng cách train/validation accuracy (ít
+    overfitting hơn), có thể phải đánh đổi bằng tốc độ hội tụ chậm hơn một chút.
+  changed_from_baseline: "dropout: 0.3 -> 0.5 (thay đổi một yếu tố duy nhất)"
+  kept_constant: >
+    Kiến trúc (FashionCNN), số epoch, batch size, learning rate, optimizer, seed,
+    và cách chia train/validation giống hệt cnn_baseline.
+  expected_observation: >
+    Khoảng cách giữa train_accuracy và val_accuracy nhỏ hơn so với cnn_baseline,
+    với validation accuracy tương tự hoặc hơi khác.
+
+model:
+  name: cnn
+  dropout: 0.5
+
+training:
+  epochs: 15
+  batch_size: 64
+  learning_rate: 0.001
+  optimizer: adam
+
+data:
+  validation_ratio: 0.1
+  augmentation: false
+
+seed: 42
