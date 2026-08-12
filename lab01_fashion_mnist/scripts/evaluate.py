@@ -1,12 +1,3 @@
-"""Evaluate a trained run's best checkpoint on the official FashionMNIST test set.
-
-Loads run_dir/config.yaml + run_dir/checkpoints/best_model.pt, evaluates once on the
-official test set, and saves confusion matrix, per-class metrics, and misclassified
-sample metadata into the same run directory.
-
-Usage:
-    python scripts/evaluate.py --run runs/cnn/run_001
-"""
 
 import argparse
 import json
@@ -42,8 +33,8 @@ def main() -> None:
     device = get_device()
     print(f"Sử dụng thiết bị: {device}")
 
-    # Same seed/validation_ratio/augmentation as training, so the split matches; only the
-    # test_loader (official, untouched test set) is actually used here.
+    # Giống train.py, nhưng ở đây chỉ cần test_loader )
+    # test_loader được sử dụng để đánh giá mô hình tốt nhất trên tập kiểm tra chính thức
     _train_loader, _val_loader, test_loader = get_dataloaders(
         batch_size=training_config["batch_size"],
         validation_ratio=data_config["validation_ratio"],
@@ -80,7 +71,7 @@ def main() -> None:
     conf_matrix_fig = visualization.plot_confusion_matrix(conf_matrix, CLASS_NAMES, title="Ma trận nhầm lẫn (Tập kiểm tra)")
     visualization.save_figure(conf_matrix_fig, run_dir / "plots" / "confusion_matrix.png")
 
-    # Merge test accuracy into the existing final_metrics.json (created by train.py).
+    # Cập nhật final_metrics.json với độ chính xác trên tập kiểm tra
     final_metrics_path = metrics_dir / "final_metrics.json"
     final_metrics = {}
     if final_metrics_path.exists():
