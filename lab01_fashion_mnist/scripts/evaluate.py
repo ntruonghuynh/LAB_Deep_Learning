@@ -6,6 +6,8 @@ from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
+sys.stdout.reconfigure(encoding="utf-8")
+sys.stderr.reconfigure(encoding="utf-8")
 
 import pandas as pd
 import torch
@@ -22,7 +24,7 @@ def main() -> None:
     args = parser.parse_args()
 
     run_dir = Path(args.run)
-    with open(run_dir / "config.yaml", "r") as f:
+    with open(run_dir / "config.yaml", "r", encoding="utf-8") as f:
         config = yaml.safe_load(f)
 
     model_config = config["model"]
@@ -75,10 +77,10 @@ def main() -> None:
     final_metrics_path = metrics_dir / "final_metrics.json"
     final_metrics = {}
     if final_metrics_path.exists():
-        with open(final_metrics_path, "r") as f:
+        with open(final_metrics_path, "r", encoding="utf-8") as f:
             final_metrics = json.load(f)
     final_metrics["test_accuracy"] = test_accuracy
-    with open(final_metrics_path, "w") as f:
+    with open(final_metrics_path, "w", encoding="utf-8") as f:
         json.dump(final_metrics, f, indent=2)
 
     print(f"Đã lưu các artifact đánh giá tại: {run_dir}")

@@ -16,6 +16,8 @@ from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
+sys.stdout.reconfigure(encoding="utf-8")
+sys.stderr.reconfigure(encoding="utf-8")
 
 import pandas as pd
 import yaml
@@ -42,9 +44,9 @@ def collect_run_records() -> list[dict]:
             if not config_path.exists() or not final_metrics_path.exists():
                 continue  # incomplete or non-official run; skip
 
-            with open(config_path, "r") as f:
+            with open(config_path, "r", encoding="utf-8") as f:
                 config = yaml.safe_load(f)
-            with open(final_metrics_path, "r") as f:
+            with open(final_metrics_path, "r", encoding="utf-8") as f:
                 final_metrics = json.load(f)
 
             records.append({
@@ -73,7 +75,7 @@ def merge_existing_conclusions(df: pd.DataFrame) -> pd.DataFrame:
     """
     if not SUMMARY_PATH.exists():
         return df
-    previous_df = pd.read_csv(SUMMARY_PATH)
+    previous_df = pd.read_csv(SUMMARY_PATH, encoding="utf-8")
     if "conclusion" not in previous_df.columns:
         return df
     previous_conclusions = dict(zip(previous_df["run_id"], previous_df["conclusion"]))
@@ -91,7 +93,7 @@ def main() -> None:
     df = pd.DataFrame(records)
     df = merge_existing_conclusions(df)
     SUMMARY_PATH.parent.mkdir(parents=True, exist_ok=True)
-    df.to_csv(SUMMARY_PATH, index=False)
+    df.to_csv(SUMMARY_PATH, index=False, encoding="utf-8")
 
     print(f"Đã cập nhật {SUMMARY_PATH} với {len(df)} lần chạy.\n")
     print(df.to_string(index=False))

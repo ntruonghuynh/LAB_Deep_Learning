@@ -29,6 +29,12 @@ CLASS_NAMES = [
 FASHION_MNIST_MEAN = (0.2860,)
 FASHION_MNIST_STD = (0.3530,)
 
+# Torchvision's default FashionMNIST mirror can be unavailable on some networks.
+datasets.FashionMNIST.mirrors = [
+    "https://raw.githubusercontent.com/zalandoresearch/fashion-mnist/master/data/fashion/",
+    "https://github.com/zalandoresearch/fashion-mnist/raw/master/data/fashion/",
+]
+
 
 def get_device() -> torch.device:
     """Return the best available device: CUDA > MPS > CPU."""
@@ -75,7 +81,7 @@ def get_or_create_split(seed: int, validation_ratio: float, train_size: int) -> 
     """
     split_path = _split_file_path(seed)
     if split_path.exists():
-        with open(split_path, "r") as f:
+        with open(split_path, "r", encoding="utf-8") as f:
             return json.load(f)
 
     generator = torch.Generator().manual_seed(seed)
@@ -92,7 +98,7 @@ def get_or_create_split(seed: int, validation_ratio: float, train_size: int) -> 
     }
 
     SPLITS_DIR.mkdir(parents=True, exist_ok=True)
-    with open(split_path, "w") as f:
+    with open(split_path, "w", encoding="utf-8") as f:
         json.dump(split, f)
 
     return split

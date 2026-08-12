@@ -14,6 +14,8 @@ from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
+sys.stdout.reconfigure(encoding="utf-8")
+sys.stderr.reconfigure(encoding="utf-8")
 
 import pandas as pd
 import yaml
@@ -77,7 +79,7 @@ def main() -> None:
     parser.add_argument("--config", type=str, required=True, help="Path to a YAML config file.")
     args = parser.parse_args()
 
-    with open(args.config, "r") as f:
+    with open(args.config, "r", encoding="utf-8") as f:
         config = yaml.safe_load(f)
 
     seed = config["seed"]
