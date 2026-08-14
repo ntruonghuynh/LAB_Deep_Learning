@@ -1,0 +1,50 @@
+experiment:
+  name: resnet18_pretrained
+  purpose: 'Use a ResNet18 model pretrained on ImageNet as a transfer learning baseline
+    for FashionMNIST classification.
+
+    '
+  hypothesis: 'A pretrained ResNet18 with a frozen backbone should learn the FashionMNIST
+    classification head quickly, even with a small number of epochs.
+
+    '
+  changed_from_baseline: 'Replace the custom CNN with torchvision.models.resnet18
+    pretrained weights, resize FashionMNIST images to 224x224, convert grayscale images
+    to 3 channels, freeze the feature extractor, and train only the final classifier
+    layer.
+
+    '
+  kept_constant: 'Use the same FashionMNIST dataset, validation ratio, seed, loss
+    function, and train/validation/test evaluation protocol as the previous experiments.
+
+    '
+  expected_observation: 'Validation accuracy should improve quickly compared with
+    a randomly initialized model, while training remains relatively stable because
+    only the classifier is trained.
+
+    '
+model:
+  name: resnet18
+  source: torchvision.models
+  pretrained: true
+  weights: IMAGENET1K_V1
+  num_classes: 10
+transfer_learning:
+  freeze_backbone: true
+  train_classifier_only: true
+  unfreeze_layers: []
+training:
+  epochs: 5
+  batch_size: 32
+  learning_rate: 0.001
+  optimizer: adam
+data:
+  validation_ratio: 0.1
+  augmentation: false
+  image_size: 224
+  input_channels: 3
+  normalization: imagenet
+tensorboard:
+  enabled: true
+  log_dir: tensorboard
+seed: 42

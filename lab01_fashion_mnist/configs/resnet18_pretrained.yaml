@@ -1,0 +1,49 @@
+experiment:
+  name: resnet18_pretrained
+  purpose: >
+    Sử dụng ResNet18 đã được huấn luyện trước trên ImageNet làm mô hình transfer
+    learning baseline cho bài toán phân loại FashionMNIST.
+  hypothesis: >
+    ResNet18 pretrained với backbone được đóng băng sẽ học nhanh lớp phân loại
+    FashionMNIST ngay cả khi chỉ huấn luyện trong một số ít epoch.
+  changed_from_baseline: >
+    Thay CNN tự xây dựng bằng torchvision.models.resnet18 với trọng số pretrained,
+    resize ảnh FashionMNIST thành 224x224, chuyển ảnh xám thành 3 kênh, đóng băng
+    bộ trích xuất đặc trưng và chỉ huấn luyện lớp classifier cuối.
+  kept_constant: >
+    Giữ nguyên tập dữ liệu FashionMNIST, tỷ lệ validation, seed, hàm loss và quy
+    trình train/validation/test như các thí nghiệm trước.
+  expected_observation: >
+    Validation accuracy được kỳ vọng cải thiện nhanh so với mô hình khởi tạo ngẫu
+    nhiên, đồng thời quá trình huấn luyện ổn định vì chỉ classifier được cập nhật.
+
+model:
+  name: resnet18
+  source: torchvision.models
+  pretrained: true
+  weights: IMAGENET1K_V1
+  num_classes: 10
+
+transfer_learning:
+  freeze_backbone: true
+  train_classifier_only: true
+  unfreeze_layers: []
+
+training:
+  epochs: 5
+  batch_size: 32
+  learning_rate: 0.001
+  optimizer: adam
+
+data:
+  validation_ratio: 0.1
+  augmentation: false
+  image_size: 224
+  input_channels: 3
+  normalization: imagenet
+
+tensorboard:
+  enabled: true
+  log_dir: tensorboard
+
+seed: 42

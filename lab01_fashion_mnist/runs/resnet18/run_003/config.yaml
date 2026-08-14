@@ -1,0 +1,50 @@
+experiment:
+  name: resnet18_finetune
+  purpose: 'Fine-tune the last convolutional block of an ImageNet-pretrained ResNet18
+    for FashionMNIST classification.
+
+    '
+  hypothesis: 'Unfreezing the final ResNet block should allow the model to adapt better
+    to FashionMNIST while still benefiting from pretrained visual features.
+
+    '
+  changed_from_baseline: 'Start from the frozen ResNet18 pretrained baseline, then
+    unfreeze layer4 and use a smaller learning rate to fine-tune the final feature
+    block and classifier.
+
+    '
+  kept_constant: 'Keep the same dataset, image size, ImageNet normalization, batch
+    size, seed, and evaluation protocol as the ResNet18 pretrained baseline.
+
+    '
+  expected_observation: 'Fine-tuning may improve validation accuracy over the classifier-only
+    baseline, but may also overfit faster if trained for too many epochs.
+
+    '
+model:
+  name: resnet18
+  source: torchvision.models
+  pretrained: true
+  weights: IMAGENET1K_V1
+  num_classes: 10
+transfer_learning:
+  freeze_backbone: false
+  train_classifier_only: false
+  unfreeze_layers:
+  - layer4
+  - fc
+training:
+  epochs: 5
+  batch_size: 32
+  learning_rate: 0.0001
+  optimizer: adam
+data:
+  validation_ratio: 0.1
+  augmentation: true
+  image_size: 224
+  input_channels: 3
+  normalization: imagenet
+tensorboard:
+  enabled: true
+  log_dir: tensorboard
+seed: 42

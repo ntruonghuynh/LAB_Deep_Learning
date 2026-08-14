@@ -1,0 +1,47 @@
+experiment:
+  name: mobilenet_v2_pretrained
+  purpose: 'Test a lightweight MobileNetV2 pretrained on ImageNet for FashionMNIST
+    transfer learning.
+
+    '
+  hypothesis: 'MobileNetV2 should train faster than heavier architectures while still
+    achieving strong validation accuracy due to pretrained features.
+
+    '
+  changed_from_baseline: 'Use torchvision.models.mobilenet_v2 pretrained weights,
+    replace the classifier with a 10-class output layer, and freeze the feature extractor.
+
+    '
+  kept_constant: 'Use the same FashionMNIST split, seed, 224x224 RGB-style preprocessing,
+    and evaluation workflow as other pretrained experiments.
+
+    '
+  expected_observation: 'MobileNetV2 should be a good speed/accuracy tradeoff, especially
+    on CPU.
+
+    '
+model:
+  name: mobilenet_v2
+  source: torchvision.models
+  pretrained: true
+  weights: IMAGENET1K_V1
+  num_classes: 10
+transfer_learning:
+  freeze_backbone: true
+  train_classifier_only: true
+  unfreeze_layers: []
+training:
+  epochs: 5
+  batch_size: 32
+  learning_rate: 0.001
+  optimizer: adam
+data:
+  validation_ratio: 0.1
+  augmentation: false
+  image_size: 224
+  input_channels: 3
+  normalization: imagenet
+tensorboard:
+  enabled: true
+  log_dir: tensorboard
+seed: 42

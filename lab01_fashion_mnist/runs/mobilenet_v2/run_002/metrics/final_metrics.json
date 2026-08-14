@@ -1,0 +1,10 @@
+{
+  "run_id": "run_002",
+  "model": "mobilenet_v2",
+  "best_epoch": 4,
+  "best_val_loss": 0.4019256230195363,
+  "best_val_accuracy": 0.8528333333333333,
+  "final_train_accuracy": 0.8298888888888889,
+  "final_val_accuracy": 0.8535,
+  "test_accuracy": 0.8512
+}

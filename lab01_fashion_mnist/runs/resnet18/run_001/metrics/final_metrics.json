@@ -1,0 +1,10 @@
+{
+  "run_id": "run_001",
+  "model": "resnet18",
+  "best_epoch": 5,
+  "best_val_loss": 0.37554440172513326,
+  "best_val_accuracy": 0.8638333333333333,
+  "final_train_accuracy": 0.8587407407407407,
+  "final_val_accuracy": 0.8638333333333333,
+  "test_accuracy": 0.8644
+}

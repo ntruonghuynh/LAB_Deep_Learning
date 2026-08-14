@@ -41,10 +41,15 @@ def main() -> None:
         batch_size=training_config["batch_size"],
         validation_ratio=data_config["validation_ratio"],
         augmentation=data_config.get("augmentation", False),
+        image_size=data_config.get("image_size", 28),
+        input_channels=data_config.get("input_channels", 1),
+        normalization=data_config.get("normalization", "fashion_mnist"),
         seed=seed,
     )
 
-    model = build_model(model_config["name"], model_config)
+    eval_model_config = dict(model_config)
+    eval_model_config["pretrained"] = False
+    model = build_model(model_config["name"], eval_model_config, config.get("transfer_learning", {}))
     checkpoint_path = run_dir / "checkpoints" / "best_model.pt"
     state_dict = torch.load(checkpoint_path, map_location=device)
     model.load_state_dict(state_dict)
