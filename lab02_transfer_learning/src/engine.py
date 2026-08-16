@@ -10,6 +10,7 @@ from typing import Iterable
 import torch
 from torch import nn
 from torch.utils.data import DataLoader
+from torch.utils.tensorboard import SummaryWriter
 
 from src.metrics import RunningAverage, accuracy_from_logits
 
@@ -87,6 +88,7 @@ def train_model(
     learning_rate: float,
     device: torch.device,
     optimizer_name: str = "adam",
+    writer: SummaryWriter | None = None,
     verbose: bool = True,
 ) -> dict:
     """Run the full training loop for `epochs` epochs and track history every epoch.
@@ -100,7 +102,10 @@ def train_model(
     """
     model.to(device)
     criterion = nn.CrossEntropyLoss()
-    optimizer = build_optimizer(optimizer_name, model.parameters(), learning_rate)
+    trainable_params = [param for param in model.parameters() if param.requires_grad]
+    if not trainable_params:
+        raise ValueError("Model has no trainable parameters. Check transfer_learning config.")
+    optimizer = build_optimizer(optimizer_name, trainable_params, learning_rate)
 
     history = []
     best_val_loss = float("inf")
@@ -134,6 +139,13 @@ def train_model(
                 f"train_loss: {train_loss:.4f} train_acc: {train_accuracy:.4f} - "
                 f"val_loss: {val_loss:.4f} val_acc: {val_accuracy:.4f}"
             )
+
+        if writer is not None:
+            writer.add_scalar("Loss/train", train_loss, epoch)
+            writer.add_scalar("Loss/validation", val_loss, epoch)
+            writer.add_scalar("Accuracy/train", train_accuracy, epoch)
+            writer.add_scalar("Accuracy/validation", val_accuracy, epoch)
+            writer.add_scalar("LearningRate", current_lr, epoch)
 
     return {
         "history": history,

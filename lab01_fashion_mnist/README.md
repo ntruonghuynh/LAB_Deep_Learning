@@ -1,104 +1,57 @@
-# Lab 1 - Phan loai FashionMNIST bang PyTorch
+# Lab 1 - Phân loại FashionMNIST (PyTorch)
 
-Project nay xay dung, huan luyen, danh gia va so sanh cac mo hinh MLP/CNN don gian cho bai toan phan loai anh FashionMNIST. Code duoc viet theo kieu PyTorch thu cong de de hieu pipeline: `Dataset`/`DataLoader`, transforms, training loop, validation, checkpoint, confusion matrix va phan tich loi.
+## Mục tiêu
 
-## 1. Cau truc project
+Xây dựng, huấn luyện và so sánh các bộ phân loại MLP và CNN đơn giản trên FashionMNIST bằng
+các khối xây dựng cốt lõi của PyTorch (`Dataset`/`DataLoader`, `transforms`, vòng lặp huấn
+luyện thủ công), đánh giá chúng đúng cách (không chỉ dựa vào accuracy cuối cùng), và thực
+hiện phân tích lỗi thực sự dựa trên các kết quả đã lưu thật.
 
-```text
+## Bộ dữ liệu
+
+[FashionMNIST](https://github.com/zalandoresearch/fashion-mnist) thông qua
+`torchvision.datasets`: 10 lớp ảnh trang phục xám 28x28, 60.000 ảnh huấn luyện chính thức
+và 10.000 ảnh kiểm tra chính thức, cân bằng hoàn hảo giữa các lớp.
+
+## Pipeline Machine Learning
+
+```
+Bài toán -> Khám phá dữ liệu -> Tiền xử lý/Biến đổi -> Chia tập Train/Val/Test
+        -> Mô hình cơ sở -> Huấn luyện -> Giám sát -> Validation/Lựa chọn mô hình
+        -> Thí nghiệm -> Đánh giá trên tập test cuối cùng -> Ma trận nhầm lẫn
+        -> Phân tích lỗi phân loại sai -> So sánh mô hình -> Kết luận
+```
+
+Đây là luồng mà các notebook (và bất kỳ phần trình bày nào của lab này) nên tuân theo -
+không phải là đi qua từng file một cách rời rạc.
+
+## Cấu trúc dự án
+
+```
 lab01_fashion_mnist/
-|-- configs/            # File cau hinh YAML cho tung thi nghiem
-|-- data/               # Du lieu FashionMNIST tai ve va split train/validation co dinh
-|-- experiments/        # Bang tong hop ket qua cac run
-|-- notebooks/          # Notebook kham pha, so sanh, phan tich loi
-|-- report/figures/     # Hinh anh dung cho bao cao
-|-- runs/               # Ket qua train/evaluate, checkpoint, metrics, plots
-|-- scripts/            # Lenh chay train/evaluate/compare
-|-- src/                # Source code chinh
-|-- requirements.txt    # Danh sach thu vien can cai
-+-- README.md
+├── configs/            # Config YAML, mỗi file cho một thí nghiệm chính thức
+├── notebooks/          # khám phá / giám sát / so sánh / phân tích lỗi (lớp trình bày)
+├── src/                # mã nguồn tái sử dụng: dataset, models, engine, evaluation, metrics, visualization, run_manager
+├── scripts/             # train.py, evaluate.py, compare_models.py (điểm vào dòng lệnh)
+├── data/                # bộ nhớ đệm FashionMNIST (gitignored) + split train/val cố định (đã commit)
+├── experiments/         # experiment_summary.csv (tổng hợp, chỉ chứa kết quả thật)
+├── runs/                # một thư mục cho mỗi lần chạy chính thức: config, description, metrics, plots, checkpoint
+└── report/figures/      # các hình được chọn cho báo cáo/trình bày cuối cùng
 ```
 
-Thu muc project dung de chay lenh la:
-
-```text
-E:\Deep_learning\LAB1_Deep_Learning\lab01_fashion_mnist
-```
-
-Neu ban dang o:
-
-```text
-E:\Deep_learning\LAB1_Deep_Learning
-```
-
-thi can `cd lab01_fashion_mnist` truoc khi cai thu vien hoac chay code.
-
-## 2. Cai dat tren Windows
-
-Mo terminal PowerShell hoac terminal trong VS Code, chay:
-
-```powershell
-cd E:\Deep_learning\LAB1_Deep_Learning\lab01_fashion_mnist
-python -m venv .venv
-.\.venv\Scripts\Activate.ps1
-pip install -r requirements.txt
-```
-
-Neu PowerShell chan activate script, chay lenh nay mot lan:
-
-```powershell
-Set-ExecutionPolicy -Scope CurrentUser RemoteSigned
-```
-
-Sau do activate lai:
-
-```powershell
-.\.venv\Scripts\Activate.ps1
-```
-
-Kiem tra nhanh thu vien:
-
-```powershell
-python -c "import torch, torchvision, pandas, yaml, sklearn; print('OK')"
-```
-
-## 3. Cai dat tren macOS/Linux
+## Cài đặt
 
 ```bash
-cd /duong/dan/toi/lab01_fashion_mnist
+cd lab01_fashion_mnist
 python3 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-Kiem tra nhanh thu vien:
+Tự động chạy trên CPU, CUDA, hoặc Apple MPS (`src/dataset.get_device()` chọn thiết bị tốt
+nhất hiện có; mọi thí nghiệm trong repo này được chạy trên MPS).
 
-```bash
-python -c "import torch, torchvision, pandas, yaml, sklearn; print('OK')"
-```
-
-## 4. Cach train model
-
-Chay trong thu muc `lab01_fashion_mnist`.
-
-Train MLP baseline:
-
-```powershell
-python scripts\train.py --config configs\mlp_baseline.yaml
-```
-
-Train CNN baseline:
-
-```powershell
-python scripts\train.py --config configs\cnn_baseline.yaml
-```
-
-Train CNN experiment:
-
-```powershell
-python scripts\train.py --config configs\cnn_experiment.yaml
-```
-
-Tren macOS/Linux co the dung dau `/` thay vi `\`:
+## Cách huấn luyện
 
 ```bash
 python scripts/train.py --config configs/mlp_baseline.yaml
@@ -106,196 +59,86 @@ python scripts/train.py --config configs/cnn_baseline.yaml
 python scripts/train.py --config configs/cnn_experiment.yaml
 ```
 
-Moi lan train se tao mot thu muc run moi:
+Mỗi lệnh gọi tạo ra một thư mục run mới dưới `runs/<model>/run_XXX/` (tự động tăng số,
+không bao giờ bị ghi đè) chứa `config.yaml`, `description.md`, `metrics/history.csv`,
+`metrics/final_metrics.json`, `plots/loss_curve.png`, `plots/accuracy_curve.png`, và
+`checkpoints/best_model.pt` (state_dict của epoch có validation loss thấp nhất).
 
-```text
-runs/<model>/run_XXX/
-```
-
-Vi du:
-
-```text
-runs/mlp/run_001/
-runs/cnn/run_002/
-```
-
-Ben trong moi run co:
-
-```text
-config.yaml
-description.md
-metrics/history.csv
-metrics/final_metrics.json
-plots/loss_curve.png
-plots/accuracy_curve.png
-checkpoints/best_model.pt
-```
-
-## 5. Cach evaluate model
-
-Evaluate checkpoint tot nhat cua mot run tren test set:
-
-```powershell
-python scripts\evaluate.py --run runs\cnn\run_002
-```
-
-macOS/Linux:
+## Cách đánh giá
 
 ```bash
 python scripts/evaluate.py --run runs/cnn/run_002
 ```
 
-Sau khi evaluate, project se luu them:
+Nạp `config.yaml` + checkpoint tốt nhất của lần chạy đó, đánh giá một lần duy nhất trên
+**tập test chính thức**, và lưu `metrics/confusion_matrix.csv`, `metrics/per_class_metrics.csv`,
+`metrics/misclassified.csv`, và `plots/confusion_matrix.png` vào cùng thư mục run. Nó cũng
+thêm `test_accuracy` vào `final_metrics.json` của lần chạy đó.
 
-```text
-metrics/confusion_matrix.csv
-metrics/per_class_metrics.csv
-metrics/misclassified.csv
-plots/confusion_matrix.png
+Để tái tạo bảng so sánh giữa các lần chạy:
+
+```bash
+python scripts/compare_models.py
 ```
 
-Dong thoi `metrics/final_metrics.json` se duoc cap nhat them `test_accuracy`.
+Quét qua mọi lần chạy chính thức (bất kỳ thư mục nào có cả `config.yaml` và
+`metrics/final_metrics.json`) và ghi lại `experiments/experiment_summary.csv` - giữ nguyên
+bất kỳ văn bản `conclusion` nào đã được viết cho một lần chạy.
 
-## 6. So sanh cac model
+## Cách chạy các Notebook
 
-Tao lai bang tong hop ket qua:
+Mở `notebooks/01_data_exploration.ipynb`, `02_training_and_comparison.ipynb`, và
+`03_error_analysis.ipynb` theo thứ tự, sử dụng `.venv` của dự án làm kernel. Cả ba đều chạy
+từ đầu đến cuối mà không huấn luyện lại gì cả - chúng chỉ nạp các artifact đã được lưu sẵn
+dưới `runs/`, `data/splits/`, và `experiments/`.
 
-```powershell
-python scripts\compare_models.py
-```
+## Quy ước thí nghiệm
 
-Ket qua duoc luu tai:
+- Mọi lần huấn luyện có ý nghĩa đều được khởi chạy qua `scripts/train.py` với một config từ
+  `configs/`, tạo ra một lần chạy chính thức dưới `runs/<model>/run_XXX/`.
+- Các lần chạy debug/kiểm tra nhanh (ví dụ: kiểm tra nhanh 1 epoch trong lúc phát triển) được
+  thực hiện với các config tạm thời bên ngoài `configs/` và bị xóa sau đó - chúng không bao
+  giờ trở thành lần chạy chính thức.
+- Các lần chạy chính thức không bao giờ bị ghi đè; ID của lần chạy tiếp theo được tính tự động.
+- Việc lựa chọn mô hình giữa các thí nghiệm chỉ dựa trên số liệu **validation**. Tập test
+  chính thức chỉ được dùng đúng một lần cho mỗi lần chạy được chọn, thuần túy để báo cáo cuối
+  cùng.
 
-```text
-experiments/experiment_summary.csv
-```
+### Các lần chạy chính thức trong repo này
 
-## 7. Xu ly loi tai FashionMNIST
+| Lần chạy | Mục đích | Val acc tốt nhất | Test acc |
+|---|---|---|---|
+| `mlp/run_001` | MLP cơ sở | 0.8902 | 0.8847 |
+| `cnn/run_001` | CNN cơ sở | 0.9195 | 0.9161 |
+| `cnn/run_002` | Thí nghiệm CNN: dropout 0.3 -> 0.5 | 0.9262 | 0.9204 |
 
-Lan chay dau tien se tu dong tai FashionMNIST vao:
+`cnn/run_002` có validation accuracy tốt nhất và khoảng cách train/validation nhỏ nhất, vì
+vậy đây là mô hình được dùng trong notebook phân tích lỗi. Xem `description.md` của mỗi lần
+chạy để biết đầy đủ mục đích/giả thuyết/kết quả/kết luận, và
+`experiments/experiment_summary.csv` cho bảng so sánh dạng máy có thể đọc được.
 
-```text
-data/FashionMNIST/raw
-```
+## Nơi lưu Runs/Kết quả
 
-Neu mang bi timeout hoac bi chan, ban co the thay loi dang:
+- `runs/<model>/run_XXX/` - mọi thứ về một lần chạy chính thức (config, description,
+  metrics, plots, checkpoint).
+- `experiments/experiment_summary.csv` - một dòng cho mỗi lần chạy chính thức, để so sánh
+  nhanh.
+- `data/splits/split_seed42.json` - split chỉ số train/validation cố định, dùng chung bởi
+  mọi lần chạy với `seed: 42`.
 
-```text
-RuntimeError: Error downloading ...
-Connection attempt failed
-No connection could be made because the target machine actively refused it
-```
+## Các mô hình chính
 
-Project da cau hinh them mirror GitHub chinh thuc trong `src/dataset.py`, nhung neu mang van loi thi tai thu cong 4 file sau:
+- **`FashionMLP`** (`src/models.py`): Flatten -> [Linear -> ReLU -> Dropout] x2 -> Linear(10).
+- **`FashionCNN`** (`src/models.py`): hai khối Conv(3x3)-ReLU-MaxPool (kênh 1->32->64) theo
+  sau bởi một đầu phân loại Linear(128) -> Dropout -> Linear(10).
 
-```text
-https://raw.githubusercontent.com/zalandoresearch/fashion-mnist/master/data/fashion/train-images-idx3-ubyte.gz
-https://raw.githubusercontent.com/zalandoresearch/fashion-mnist/master/data/fashion/train-labels-idx1-ubyte.gz
-https://raw.githubusercontent.com/zalandoresearch/fashion-mnist/master/data/fashion/t10k-images-idx3-ubyte.gz
-https://raw.githubusercontent.com/zalandoresearch/fashion-mnist/master/data/fashion/t10k-labels-idx1-ubyte.gz
-```
+## Ghi chú về khả năng tái lập
 
-Dat ca 4 file vao:
-
-```text
-E:\Deep_learning\LAB1_Deep_Learning\lab01_fashion_mnist\data\FashionMNIST\raw
-```
-
-Sau do chay lai lenh train.
-
-## 8. Loi encoding tren Windows
-
-Project co cac file YAML va mo ta thi nghiem bang tieng Viet UTF-8. Tren Windows, neu code khong chi dinh encoding co the gap loi:
-
-```text
-UnicodeDecodeError: 'charmap' codec can't decode byte ...
-UnicodeEncodeError: 'charmap' codec can't encode character ...
-```
-
-Code hien tai da duoc cap nhat de doc/ghi UTF-8 trong cac file:
-
-```text
-scripts/train.py
-scripts/evaluate.py
-scripts/compare_models.py
-src/dataset.py
-src/run_manager.py
-```
-
-Vi vay neu dang dung ban moi nhat, ban chi can chay lai lenh train.
-
-## 9. Thiet bi chay
-
-Project tu dong chon thiet bi tot nhat co san:
-
-```text
-CUDA > Apple MPS > CPU
-```
-
-- Windows co GPU NVIDIA va cai PyTorch CUDA dung cach: chay bang `cuda`.
-- Mac Apple Silicon: co the chay bang `mps`.
-- Neu khong co GPU phu hop: chay bang `cpu`.
-
-Tren may Windows hien tai, log co the hien:
-
-```text
-Su dung thiet bi: cpu
-```
-
-Dieu nay binh thuong, chi la train se cham hon GPU.
-
-## 10. Cac model trong project
-
-`FashionMLP` trong `src/models.py`:
-
-```text
-Flatten -> Linear -> ReLU -> Dropout -> Linear -> ReLU -> Dropout -> Linear(10)
-```
-
-`FashionCNN` trong `src/models.py`:
-
-```text
-Conv2d -> ReLU -> MaxPool
-Conv2d -> ReLU -> MaxPool
-Flatten -> Linear(128) -> ReLU -> Dropout -> Linear(10)
-```
-
-## 11. Ket qua hien co
-
-| Run | Model | Best validation accuracy | Test accuracy |
-|---|---|---:|---:|
-| `mlp/run_001` | MLP baseline | 0.8902 | 0.8847 |
-| `cnn/run_001` | CNN baseline, dropout 0.3 | 0.9195 | 0.9161 |
-| `cnn/run_002` | CNN experiment, dropout 0.5 | 0.9262 | 0.9204 |
-
-Model tot nhat hien tai la:
-
-```text
-runs/cnn/run_002
-```
-
-## 12. Notebook
-
-Mo cac notebook theo thu tu:
-
-```text
-notebooks/01_data_exploration.ipynb
-notebooks/02_training_and_comparison.ipynb
-notebooks/03_error_analysis.ipynb
-```
-
-Chon kernel la moi truong `.venv` cua project.
-
-## 13. Tom tat pipeline
-
-```text
-Tai FashionMNIST
--> Chuan hoa anh
--> Chia train/validation bang split co dinh
--> Train MLP/CNN
--> Theo doi train loss, validation loss, accuracy
--> Luu checkpoint tot nhat theo validation loss
--> Evaluate tren test set
--> Luu confusion matrix, per-class metrics, misclassified samples
--> So sanh model va ket luan
-```
+- `src/seed.py` đặt seed cho `random` của Python, NumPy, và PyTorch (CPU + CUDA/MPS) chỉ
+  bằng một lệnh gọi; seed được sử dụng luôn được ghi lại trong `config.yaml` của lần chạy.
+- Mọi thí nghiệm trong repo này dùng `seed: 42` và cùng một split đã lưu
+  (`data/splits/split_seed42.json`), vì vậy các lần chạy MLP và CNN được huấn luyện/kiểm
+  định trên cùng một dữ liệu và có thể so sánh trực tiếp với nhau.
+- Checkpoint của mô hình chỉ lưu `state_dict` (không lưu toàn bộ mô hình đã pickle);
+  `scripts/evaluate.py` dựng lại kiến trúc từ `config.yaml` và nạp state_dict, đây chính là
+  cách mọi test accuracy được báo cáo ở trên thực sự thu được (không có số liệu bịa đặt).
