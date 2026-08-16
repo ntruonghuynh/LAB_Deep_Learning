@@ -42,10 +42,10 @@ def create_run(model_name: str, config: dict, description: str) -> Path:
     run_dir = next_run_dir(model_name)
     run_dir.mkdir(parents=True, exist_ok=False)  # exist_ok=False: never silently reuse a run dir
 
-    with open(run_dir / "config.yaml", "w") as f:
+    with open(run_dir / "config.yaml", "w", encoding="utf-8") as f:
         yaml.safe_dump(config, f, sort_keys=False)
 
-    with open(run_dir / "description.md", "w") as f:
+    with open(run_dir / "description.md", "w", encoding="utf-8") as f:
         f.write(description)
 
     return run_dir
@@ -57,7 +57,7 @@ def save_history(run_dir: Path, history: list[dict]) -> Path:
     metrics_dir.mkdir(parents=True, exist_ok=True)
     history_path = metrics_dir / "history.csv"
     fieldnames = list(history[0].keys())
-    with open(history_path, "w", newline="") as f:
+    with open(history_path, "w", newline="", encoding="utf-8") as f:
         writer = csv.DictWriter(f, fieldnames=fieldnames)
         writer.writeheader()
         writer.writerows(history)
@@ -69,7 +69,7 @@ def save_final_metrics(run_dir: Path, metrics: dict) -> Path:
     metrics_dir = run_dir / "metrics"
     metrics_dir.mkdir(parents=True, exist_ok=True)
     metrics_path = metrics_dir / "final_metrics.json"
-    with open(metrics_path, "w") as f:
+    with open(metrics_path, "w", encoding="utf-8") as f:
         json.dump(metrics, f, indent=2)
     return metrics_path
 
@@ -85,5 +85,5 @@ def save_checkpoint(run_dir: Path, state_dict: dict, filename: str = "best_model
 
 def append_description(run_dir: Path, extra_text: str) -> None:
     """Append observed result / interpretation / conclusion to an existing description.md."""
-    with open(run_dir / "description.md", "a") as f:
+    with open(run_dir / "description.md", "a", encoding="utf-8") as f:
         f.write("\n" + extra_text)
