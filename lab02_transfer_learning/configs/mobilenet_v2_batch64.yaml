@@ -1,0 +1,49 @@
+experiment:
+  name: mobilenet_v2_batch64
+  purpose: >
+    Đánh giá ảnh hưởng của batch size lớn hơn khi huấn luyện lớp phân loại của
+    MobileNetV2 pretrained trên FashionMNIST.
+  hypothesis: >
+    Tăng batch size từ 32 lên 64 sẽ giảm số bước cập nhật mỗi epoch và có thể làm
+    quá trình huấn luyện ổn định hơn, nhưng độ chính xác có thể thay đổi do số lần
+    cập nhật trọng số ít hơn.
+  changed_from_baseline: >
+    Chỉ tăng batch size từ 32 lên 64 so với thí nghiệm MobileNetV2 pretrained;
+    các thành phần còn lại được giữ nguyên để tạo đối chứng công bằng.
+  kept_constant: >
+    Giữ nguyên MobileNetV2 pretrained, ImageNet weights, backbone đóng băng,
+    learning rate 0.001, Adam, 5 epoch, seed 42, cách chia dữ liệu và tiền xử lý.
+  expected_observation: >
+    Kết quả validation và test sẽ cho biết batch size 64 có cải thiện độ ổn định
+    hoặc độ chính xác so với baseline batch size 32 hay không.
+
+model:
+  name: mobilenet_v2
+  source: torchvision.models
+  pretrained: true
+  weights: IMAGENET1K_V1
+  num_classes: 10
+
+transfer_learning:
+  freeze_backbone: true
+  train_classifier_only: true
+  unfreeze_layers: []
+
+training:
+  epochs: 5
+  batch_size: 64
+  learning_rate: 0.001
+  optimizer: adam
+
+data:
+  validation_ratio: 0.1
+  augmentation: false
+  image_size: 224
+  input_channels: 3
+  normalization: imagenet
+
+tensorboard:
+  enabled: true
+  log_dir: tensorboard
+
+seed: 42

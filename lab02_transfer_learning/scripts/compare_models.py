@@ -93,7 +93,7 @@ def main() -> None:
     df = pd.DataFrame(records)
     df = merge_existing_conclusions(df)
     SUMMARY_PATH.parent.mkdir(parents=True, exist_ok=True)
-    df.to_csv(SUMMARY_PATH, index=False, encoding="utf-8")
+    df.to_csv(SUMMARY_PATH, index=False, encoding="utf-8", lineterminator="\n")
 
     print(f"Đã cập nhật {SUMMARY_PATH} với {len(df)} lần chạy.\n")
     print(df.to_string(index=False))

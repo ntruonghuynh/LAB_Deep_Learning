@@ -20,7 +20,12 @@ from src.models import build_model
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Evaluate a run's best model on the official test set.")
-    parser.add_argument("--run", type=str, required=True, help="Path to a run directory, e.g. runs/cnn/run_001")
+    parser.add_argument(
+        "--run",
+        type=str,
+        required=True,
+        help="Path to a run directory, e.g. runs/resnet18/run_003",
+    )
     args = parser.parse_args()
 
     run_dir = Path(args.run)

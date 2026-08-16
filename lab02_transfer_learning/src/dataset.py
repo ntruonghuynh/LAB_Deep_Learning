@@ -3,8 +3,8 @@
 Design notes:
 - The official FashionMNIST test set is only ever returned for final evaluation.
 - The official training set is split once into train/validation using a fixed seed, and the
-  resulting indices are cached under data/splits/ so every experiment (MLP, CNN, CNN experiment)
-  trains and validates on exactly the same data.
+  resulting indices are cached under data/splits/ so every experiment trains and validates
+  on exactly the same data.
 """
 
 import json
@@ -99,8 +99,8 @@ def _split_file_path(seed: int) -> Path:
 def get_or_create_split(seed: int, validation_ratio: float, train_size: int) -> dict:
     """Load a saved train/val index split, creating and saving it if it doesn't exist yet.
 
-    Reusing the same saved split across experiments is what guarantees MLP and CNN runs are
-    compared under equivalent data conditions.
+    Reusing the same saved split guarantees all runs are compared under equivalent data
+    conditions.
     """
     split_path = _split_file_path(seed)
     if split_path.exists():

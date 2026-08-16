@@ -5,7 +5,7 @@ plots/loss_curve.png, plots/accuracy_curve.png, and checkpoints/best_model.pt un
 freshly created runs/<model>/run_XXX/ directory.
 
 Usage:
-    python scripts/train.py --config configs/mlp_baseline.yaml
+    python scripts/train.py --config configs/resnet18_pretrained.yaml
 """
 
 import argparse

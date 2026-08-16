@@ -1,0 +1,46 @@
+experiment:
+  name: mobilenet_v2_batch64
+  purpose: "\u0110\xE1nh gi\xE1 \u1EA3nh h\u01B0\u1EDFng c\u1EE7a batch size l\u1EDB\
+    n h\u01A1n khi hu\u1EA5n luy\u1EC7n l\u1EDBp ph\xE2n lo\u1EA1i c\u1EE7a MobileNetV2\
+    \ pretrained tr\xEAn FashionMNIST.\n"
+  hypothesis: "T\u0103ng batch size t\u1EEB 32 l\xEAn 64 s\u1EBD gi\u1EA3m s\u1ED1\
+    \ b\u01B0\u1EDBc c\u1EADp nh\u1EADt m\u1ED7i epoch v\xE0 c\xF3 th\u1EC3 l\xE0\
+    m qu\xE1 tr\xECnh hu\u1EA5n luy\u1EC7n \u1ED5n \u0111\u1ECBnh h\u01A1n, nh\u01B0\
+    ng \u0111\u1ED9 ch\xEDnh x\xE1c c\xF3 th\u1EC3 thay \u0111\u1ED5i do s\u1ED1 l\u1EA7\
+    n c\u1EADp nh\u1EADt tr\u1ECDng s\u1ED1 \xEDt h\u01A1n.\n"
+  changed_from_baseline: "Ch\u1EC9 t\u0103ng batch size t\u1EEB 32 l\xEAn 64 so v\u1EDB\
+    i th\xED nghi\u1EC7m MobileNetV2 pretrained; c\xE1c th\xE0nh ph\u1EA7n c\xF2n\
+    \ l\u1EA1i \u0111\u01B0\u1EE3c gi\u1EEF nguy\xEAn \u0111\u1EC3 t\u1EA1o \u0111\
+    \u1ED1i ch\u1EE9ng c\xF4ng b\u1EB1ng.\n"
+  kept_constant: "Gi\u1EEF nguy\xEAn MobileNetV2 pretrained, ImageNet weights, backbone\
+    \ \u0111\xF3ng b\u0103ng, learning rate 0.001, Adam, 5 epoch, seed 42, c\xE1ch\
+    \ chia d\u1EEF li\u1EC7u v\xE0 ti\u1EC1n x\u1EED l\xFD.\n"
+  expected_observation: "K\u1EBFt qu\u1EA3 validation v\xE0 test s\u1EBD cho bi\u1EBF\
+    t batch size 64 c\xF3 c\u1EA3i thi\u1EC7n \u0111\u1ED9 \u1ED5n \u0111\u1ECBnh\
+    \ ho\u1EB7c \u0111\u1ED9 ch\xEDnh x\xE1c so v\u1EDBi baseline batch size 32 hay\
+    \ kh\xF4ng.\n"
+model:
+  name: mobilenet_v2
+  source: torchvision.models
+  pretrained: true
+  weights: IMAGENET1K_V1
+  num_classes: 10
+transfer_learning:
+  freeze_backbone: true
+  train_classifier_only: true
+  unfreeze_layers: []
+training:
+  epochs: 5
+  batch_size: 64
+  learning_rate: 0.001
+  optimizer: adam
+data:
+  validation_ratio: 0.1
+  augmentation: false
+  image_size: 224
+  input_channels: 3
+  normalization: imagenet
+tensorboard:
+  enabled: true
+  log_dir: tensorboard
+seed: 42
