@@ -1,13 +1,9 @@
-"""Scan all official runs, rebuild experiments/experiment_summary.csv, and print a
-comparison table across runs.
+"""Quét tất cả các lượt chạy (run) chính thức, dựng lại file experiments/experiment_summary.csv, và in bảng so sánh giữa các lượt chạy.
 
-Only runs that have both config.yaml and metrics/final_metrics.json are included, so
-debug/smoke-test executions (which never call run_manager.create_run) are naturally
-excluded. The 'conclusion' column is intentionally left for the student to fill in after
-reviewing results in notebooks/02_training_and_comparison.ipynb - it is not fabricated here.
+Chỉ những lượt chạy có cả file config.yaml và metrics/final_metrics.json mới được bao gồm, do đó các lần thực thi debug/smoke-test (vốn không bao giờ gọi run_manager.create_run) sẽ tự động bị loại trừ. Cột 'conclusion' cố tình được để trống để sinh viên tự điền sau khi xem xét kết quả trong notebooks/02_training_and_comparison.ipynb - nó không được tự tạo ở đây.
 
-Usage:
-    python scripts/compare_models.py
+Cách dùng:
+python scripts/compare_models.py
 """
 
 import json
@@ -25,7 +21,7 @@ SUMMARY_PATH = PROJECT_ROOT / "experiments" / "experiment_summary.csv"
 
 
 def collect_run_records() -> list[dict]:
-    """Read config.yaml + metrics/final_metrics.json from every official run directory."""
+    """Đọc file config.yaml + metrics/final_metrics.json từ mọi thư mục lượt chạy (run) chính thức."""
     records = []
     if not RUNS_DIR.exists():
         return records
@@ -66,11 +62,7 @@ def collect_run_records() -> list[dict]:
 
 
 def merge_existing_conclusions(df: pd.DataFrame) -> pd.DataFrame:
-    """Preserve manually-written 'conclusion' text from a previous summary, keyed by run_id.
-
-    This lets a student write a conclusion once after reviewing a run, and keeps it even
-    after compare_models.py is re-run to pick up new runs.
-    """
+    
     if not SUMMARY_PATH.exists():
         return df
     previous_df = pd.read_csv(SUMMARY_PATH)

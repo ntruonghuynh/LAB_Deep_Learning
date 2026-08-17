@@ -1,3 +1,4 @@
+
 # Lab 1 - FashionMNIST Classification with PyTorch
 
 Dự án này xây dựng, huấn luyện, đánh giá và so sánh các mô hình phân loại ảnh FashionMNIST bằng PyTorch. Mục tiêu chính là hiểu toàn bộ pipeline học sâu cơ bản: chuẩn bị dữ liệu, xây dựng mô hình, huấn luyện, đánh giá, lưu kết quả và phân tích lỗi.

@@ -1,16 +1,16 @@
 # mobilenet_v2_pretrained
 
-## Purpose
-Test a lightweight MobileNetV2 pretrained on ImageNet for FashionMNIST transfer learning.
+## Mục đích
+Thử nghiệm mô hình MobileNetV2 gọn nhẹ, được huấn luyện trước trên ImageNet, cho bài toán transfer learning trên FashionMNIST.
 
-## Hypothesis
-MobileNetV2 should train faster than heavier architectures while still achieving strong validation accuracy due to pretrained features.
+## Giả thuyết
+MobileNetV2 được kỳ vọng có thời gian huấn luyện nhanh hơn các kiến trúc nặng hơn nhưng vẫn đạt độ chính xác validation tốt nhờ tận dụng các đặc trưng đã học từ ImageNet.
 
-## Changed from baseline
-Use torchvision.models.mobilenet_v2 pretrained weights, replace the classifier with a 10-class output layer, and freeze the feature extractor.
+## Thay đổi so với baseline
+Sử dụng mô hình `torchvision.models.mobilenet_v2` với trọng số pretrained, thay lớp classifier cuối bằng lớp đầu ra 10 lớp và đóng băng phần feature extractor.
 
-## Kept constant
-Use the same FashionMNIST split, seed, 224x224 RGB-style preprocessing, and evaluation workflow as other pretrained experiments.
+## Các yếu tố được giữ cố định
+Giữ nguyên cách chia dữ liệu FashionMNIST, seed, pipeline tiền xử lý ảnh 224×224 theo dạng 3 kênh và quy trình đánh giá như các thí nghiệm pretrained khác.
 
-## Expected observation
-MobileNetV2 should be a good speed/accuracy tradeoff, especially on CPU.
+## Kết quả kỳ vọng
+MobileNetV2 được kỳ vọng mang lại sự cân bằng tốt giữa tốc độ và độ chính xác, đặc biệt trong trường hợp huấn luyện trên CPU.
