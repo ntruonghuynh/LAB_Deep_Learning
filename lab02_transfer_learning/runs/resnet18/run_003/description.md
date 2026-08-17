@@ -1,27 +1,27 @@
 # resnet18_finetune
 
-## Purpose
-Fine-tune the last convolutional block of an ImageNet-pretrained ResNet18 for FashionMNIST classification.
+## Mục đích
+Fine-tune khối convolution cuối cùng của mô hình ResNet18 đã được huấn luyện trước trên ImageNet cho bài toán phân loại FashionMNIST.
 
-## Hypothesis
-Unfreezing the final ResNet block should allow the model to adapt better to FashionMNIST while still benefiting from pretrained visual features.
+## Giả thuyết
+Việc mở khóa khối ResNet cuối cùng được kỳ vọng giúp mô hình thích nghi tốt hơn với FashionMNIST, đồng thời vẫn tận dụng được các đặc trưng thị giác đã học từ ImageNet.
 
-## Changed from baseline
-Start from the frozen ResNet18 pretrained baseline, then unfreeze layer4 and use a smaller learning rate to fine-tune the final feature block and classifier.
+## Thay đổi so với baseline
+Bắt đầu từ cấu hình ResNet18 pretrained với backbone được đóng băng, sau đó mở khóa `layer4` và sử dụng learning rate nhỏ hơn để fine-tune khối đặc trưng cuối cùng cùng với lớp classifier.
 
-## Kept constant
-Keep the same dataset, image size, ImageNet normalization, batch size, seed, and evaluation protocol as the ResNet18 pretrained baseline.
+## Các yếu tố được giữ cố định
+Giữ nguyên bộ dữ liệu, kích thước ảnh, ImageNet normalization, batch size, seed và quy trình đánh giá giống với ResNet18 pretrained baseline.
 
-## Expected observation
-Fine-tuning may improve validation accuracy over the classifier-only baseline, but may also overfit faster if trained for too many epochs.
+## Kết quả kỳ vọng
+Fine-tuning có thể giúp cải thiện validation accuracy so với baseline chỉ huấn luyện classifier, nhưng cũng có thể dẫn đến overfitting nhanh hơn nếu huấn luyện quá nhiều epoch.
 
-## Observed result
-- Best epoch: 4 (lowest validation loss)
-- Best validation loss: 0.1929
-- Best validation accuracy: 0.9320
-- Final train accuracy: 0.9715
-- Final validation accuracy: 0.9275
-- Final train/validation accuracy gap: 0.0440
+## Kết quả quan sát được
+- Epoch tốt nhất: 4 (có validation loss thấp nhất)
+- Validation loss tốt nhất: 0.1929
+- Validation accuracy tốt nhất: 0.9320
+- Train accuracy ở epoch cuối: 0.9715
+- Validation accuracy ở epoch cuối: 0.9275
+- Chênh lệch train/validation accuracy ở epoch cuối: 0.0440
 
-## Interpretation
-See notebooks/02_training_and_comparison.ipynb for comparison with other runs.
+## Nhận xét
+Xem `notebooks/02_training_and_comparison.ipynb` để so sánh thí nghiệm này với các lần chạy khác.
