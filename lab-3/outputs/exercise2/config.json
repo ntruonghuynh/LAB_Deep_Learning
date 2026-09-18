@@ -1,0 +1,15 @@
+{
+  "model_name": "distilbert-base-uncased",
+  "dataset": "imdb",
+  "max_length": 256,
+  "num_train_epochs": 3,
+  "batch_size": 32,
+  "learning_rate": 2e-05,
+  "weight_decay": 0.01,
+  "warmup_ratio": 0.1,
+  "splits": {
+    "train": 17500,
+    "val": 3750,
+    "test": 3750
+  }
+}

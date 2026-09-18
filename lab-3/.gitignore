@@ -1,0 +1,68 @@
+# __pycache__
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# Virtual environments
+venv/
+env/
+ENV/
+.venv
+
+# Jupyter Notebook
+.ipynb_checkpoints
+*.ipynb_checkpoints
+
+# Model checkpoints (keep best model, ignore intermediate)
+outputs/*/checkpoint-*/
+!outputs/*/checkpoint-best/
+
+# PyTorch
+*.pt
+*.pth
+*.ckpt
+
+# Logs
+logs/
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# IDE
+.vscode/
+.idea/
+*.sublime-*
+
+# Data (large files)
+data/raw/*.csv
+data/raw/*.tsv
+data/raw/*.json
+data/raw/*.txt
+data/processed/*.csv
+data/processed/*.tsv
+
+# Temporary files
+tmp/
+temp/
+.cache/
+
+# Weights & Biases
+wandb/
+
+# Hugging Face cache
+.cache/huggingface/
+
+# Large model files (use Git LFS if needed)
+*.bin
+*.h5
+*.safetensors
+
+# Except in checkpoint directories
+!outputs/*/checkpoint-*/pytorch_model.bin
+!outputs/*/checkpoint-*/model.safetensors
